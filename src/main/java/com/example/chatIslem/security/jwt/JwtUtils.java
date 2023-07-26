@@ -2,6 +2,7 @@ package com.example.chatIslem.security.jwt;
 
 import com.example.chatIslem.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
+
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
@@ -10,20 +11,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 
-import static org.springframework.data.mongodb.core.mapreduce.GroupBy.key;
 
 @Component
 public class JwtUtils {
     private static final Logger logger =LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${app.jwtSecret}")
+    @Value("${jwtSecret}")
     private String jwtSecret;
 
-    @Value("${app.jwtExpirationMs}")
+    @Value("${jwtExpirationMs}")
     private int jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
@@ -31,6 +31,7 @@ public class JwtUtils {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()
+                .setId(userPrincipal.getId().toString())
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
@@ -48,16 +49,16 @@ public class JwtUtils {
                 .signWith(key(),SignatureAlgorithm.HS256)
                 .compact();
     }
+
     private Key key() {
-        return  Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
-
-
 
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key()).build()
                 .parseClaimsJws(token).getBody().getSubject();
     }
+
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);

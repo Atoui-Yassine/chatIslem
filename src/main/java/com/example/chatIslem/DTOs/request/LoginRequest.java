@@ -5,10 +5,10 @@ import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 @Data
 public class LoginRequest {
-    @NotBlank
+    @NotBlank(message = "username is required")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "password is required")
     private String password;
 
 

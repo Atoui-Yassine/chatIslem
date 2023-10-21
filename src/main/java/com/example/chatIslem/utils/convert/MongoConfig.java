@@ -1,4 +1,4 @@
-package com.example.chatIslem.utils;
+package com.example.chatIslem.utils.convert;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

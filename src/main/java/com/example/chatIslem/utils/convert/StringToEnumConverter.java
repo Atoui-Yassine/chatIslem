@@ -1,4 +1,4 @@
-package com.example.chatIslem.utils;
+package com.example.chatIslem.utils.convert;
 
 import com.example.chatIslem.models.user.ERole;
 import org.springframework.core.convert.converter.Converter;
